@@ -1,0 +1,27 @@
+import React from "react";
+import { Text,StyleSheet, View } from "react-native";
+
+export default function Label({text,value,valueStyle={},style}){
+    return(
+        <View style={styles.container}>
+            <Text style={[styles.text,style]}>{text}</Text>
+            {value !== undefined && value !== null && value !== '' && (<Text style={[styles.value, valueStyle]}>{value}</Text>)}
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({ 
+    container: { 
+        marginBottom: 8, 
+        flexDirection:'row',
+    }, 
+    text: { 
+        fontWeight: 'bold', 
+        fontSize: 16, 
+        color: '#111', 
+    }, 
+    value: { 
+        fontSize: 16, 
+        color: '#444', 
+    }, 
+});
