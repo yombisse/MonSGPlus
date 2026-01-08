@@ -1,7 +1,6 @@
 import React from "react";
-import { TextInput ,StyleSheet} from "react-native";
+import { TextInput ,StyleSheet, Text} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Label from '../componnents/label';
 
 
 export default function TextInputField({
@@ -16,7 +15,7 @@ export default function TextInputField({
   return(
     
     <SafeAreaView style={[styles.container,style]}>
-      {label && <Label text={label} style={[labelStyle]}/>}
+      {label && <Text style={[labelStyle]}>{label}</Text>}
         <TextInput
           style={[styles.input,inputStyle]}
           onChangeText={onChangeText}
@@ -30,7 +29,7 @@ export default function TextInputField({
 
 const styles = StyleSheet.create({
     container:{
-      flexDirection:'row',
+      // flexDirection:'row',
      
       
     },

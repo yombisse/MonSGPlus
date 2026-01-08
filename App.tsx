@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text, View ,StyleSheet} from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Text, View ,StyleSheet,Image} from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -13,6 +13,8 @@ import StatsScreen from './src/screens/StatsScreen';
 import SettingScreen from './src/screens/SettingScreen';
 import AboutScreen from './src/screens/AboutScreen';
 import HelpScreen from './src/screens/HelpScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import LoginScreen from './src/screens/LoginScreen';
 
 
 const Stack=createStackNavigator();
@@ -27,9 +29,9 @@ function MemberStack(navigation){
       <Stack.Screen name='Members' component={MembersListScreen} 
        options={{headerShown:false}}/>
       <Stack.Screen name='MemberForm' component={MembersFormScreen}
-      options={{ title: "Ajouter / Modifier" }} />
+      options={{ title: "Ajouter / Modifier" ,headerShown:true}} />
       <Stack.Screen name='MemberDetail' component={MembersDetailsScreen}
-      options={{ title: "Ajouter / Modifier" }} />
+      options={{ title: "Details du membre",headerShown:true }} />
     </Stack.Navigator>
 
   );
@@ -59,7 +61,7 @@ function MainTab(){
       })
     }
     >
-      <Tab.Screen name='Members' component={MemberStack}/>
+      <Tab.Screen name='Members' component={MemberStack} options={{ headerShown: false, title: "Accueil" }} />
       <Tab.Screen name='Stats' component={StatsScreen}/>
       <Tab.Screen name='Settings' component={SettingScreen}/>
     </Tab.Navigator>
@@ -67,17 +69,45 @@ function MainTab(){
   );
 }
 
+function WelcomeStack(){
+  return(
+    <Stack.Navigator>
+        <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
+        <Stack.Screen name='Login' component={LoginScreen} />
+    </Stack.Navigator>
+  )
+}
+
+function HomeDrawer(){
+  return(
+    <Drawer.Navigator  screenOptions={{
+          headerStyle:{
+              backgroundColor:"#1E3A8A",
+              height:100,
+              padding:5,
+          }}}>
+          <Drawer.Screen name='Home' component={MainTab} options={{ headerShown: true, title: "Accueil",
+            headerTitle: () => (               // ✅ logo au centre
+            <Image source={require('./src/assets/logo.png')} style={styles.logo} resizeMode="contain" />
+          ),
+           }} />
+          <Drawer.Screen name='About' component={AboutScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='Help' component={HelpScreen} options={{headerShown:false}}/>
+        </Drawer.Navigator>
+  )
+}
 
 const App=() =>{
   return (
    
     <SafeAreaProvider>
       <NavigationContainer>
-        <Drawer.Navigator  >
-          <Drawer.Screen name='Home' component={MainTab} options={{headerShown:false}}/>
-          <Drawer.Screen name='About' component={AboutScreen} options={{headerShown:false}}/>
-          <Drawer.Screen name='Help' component={HelpScreen} options={{headerShown:false}}/>
-        </Drawer.Navigator>
+        <Stack.Navigator screenOptions={{
+          headerShown:false,
+        }}>
+          <Stack.Screen name='Welcome' component={WelcomeStack} />
+          <Stack.Screen name='Home' component={HomeDrawer} />
+        </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
    
@@ -85,3 +115,14 @@ const App=() =>{
   
 }
 export default App;
+
+const styles=StyleSheet.create({
+  logo:{
+    width:80,
+    height:80,
+    borderRadius:40,
+    borderWidth:1,
+    marginLeft:120,
+    marginBottom:10
+  }
+})

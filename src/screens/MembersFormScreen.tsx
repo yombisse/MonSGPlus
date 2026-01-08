@@ -57,7 +57,7 @@ export default function MembersFormScreen({route,navigation}) {
       <View>
         <Label text={"Ajouter un nouvel membre"} style={styles.Titlelabel}/>
       </View>
-      <ScrollView contentContainerStyle={{justifyContent:'flex-start',padding:10}} style={styles.scrollContainer}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{justifyContent:'flex-start',padding:10}} style={styles.scrollContainer}>
           <TextInputField label="Nom" value={nom} placeholder={"Entrer votre nom"} onChangeText={(text)=>setNom(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
           <TextInputField label="Prenom" value={prenom} placeholder={"Entrer votre prenom"} onChangeText={(text)=>setPrenom(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
           <TextInputField label="Filiere" value={filiere} placeholder={"Entrer votre filere"} onChangeText={(text)=>setFiliere(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
@@ -97,17 +97,17 @@ const styles = StyleSheet.create({
   },
   InputLabel:{
     color:'#000',
-    paddingRight:10,
-    fontSize:18,
-    paddingTop:5,
+    fontSize:24,
+    alignSelf:'center'
   },
   Input:{
-      width:200,
-      height:40,
+      width:300,
+      height:60,
       borderStyle:'solid',
       borderRadius:10,
-      borderWidth:1,
-      borderColor:"blue"
+      borderWidth:2,
+      borderColor:"#1E3A8A",
+      alignSelf:'center',
     },
   icon:{
     color:'#000',
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     width:350,
     margin:10,
     borderStyle:'solid',
-    borderWidth:1,
-    padding:10,
+    borderWidth:3,
+    borderColor:'#1E3A8A',
     alignSelf:'center',
     borderRadius:8,
     

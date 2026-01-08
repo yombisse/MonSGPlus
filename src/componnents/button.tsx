@@ -1,15 +1,14 @@
-import { StyleSheet, TouchableOpacity} from 'react-native'
+import { StyleSheet, Text, TouchableOpacity} from 'react-native'
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Label from './label';
 
 export  default function MyButton({
     label,
-    icon='add',
+    icon='',
     style={},
     onpress,
     iconStyle,
-    labelStyle
+    labelStyle={}
   }){
     let iconName;
       if (icon === 'add') { iconName = 'add'; 
@@ -18,10 +17,14 @@ export  default function MyButton({
       }
       else if (icon === 'arrow-back'){ iconName = 'arrow-back';
       }
+      else if (icon === "arrow-forward"){ iconName = "arrow-forward";
+      }
+
+      
   return (
       <TouchableOpacity onPress={onpress} style={[styles.container,style]}>
         <Ionicons name={iconName} size={20} color="#fff" style={[iconStyle]} />
-        {label && <Label text={label} style={[styles.text,labelStyle]}/>}
+        {label && <Text style={[styles.text,labelStyle]}>{label}</Text> }
       </TouchableOpacity>
   )
 }
