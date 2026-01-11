@@ -7,13 +7,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getData,deleteData,updateData} from '../storage/membersStorage'
 
 export default function MembersListScreen({navigation}) {
-  const STORAGE_KEY="@monsgplus/members"
-  const [members, setMembers]=useState([]);
+  const STORAGE_KEY="@monsgplus/meets"
+  const [meet, seMeet]=useState([]);
   const loadData=async()=>{
     try {
       const list= await getData(STORAGE_KEY);
-      setMembers(list);
-      console.log("Membres chargés:", list);
+      seMeet(list);
+      console.log("Reunions chargés:", list);
 
       
     } catch (error) {
@@ -47,14 +47,14 @@ export default function MembersListScreen({navigation}) {
 
   }
   function handlePress(){
-    navigation.navigate('MemberForm')
+    navigation.navigate('CreateMeet')
   }
   // Ou import { Ionicons } from '@expo/vector-icons';
 
 const renderItem = ({ item }) => (
   <TouchableOpacity 
     style={styles.item} 
-    onPress={() => navigation.navigate('MemberDetail', { member: item })}
+    onPress={() => navigation.navigate('MeetDetails', { meet: item })}
   >
     <View style={styles.MemberRow}>
       {/* 1. Image Profil */}
@@ -63,7 +63,7 @@ const renderItem = ({ item }) => (
       {/* 2. Conteneur Central (Nom + Statut) */}
       <View style={styles.centerContent}>
         <Text style={styles.nom} numberOfLines={2}>
-          {item.nom} {item.prenom}
+          {item.titre} {item.heure}
         </Text>
         <View style={styles.statutBadge}>
           <Text style={styles.statutText}>{item.statut}</Text>
@@ -74,7 +74,7 @@ const renderItem = ({ item }) => (
       <View style={styles.actionButtons}>
         <TouchableOpacity 
           style={styles.iconButton} 
-          onPress={()=>navigation.navigate('MemberForm', { member: item })}
+          onPress={()=>navigation.navigate('CreateMeet', { meet: item })}
         >
           <Ionicons name="create-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
@@ -99,10 +99,10 @@ const renderItem = ({ item }) => (
          
         <FlatList
           style={styles.FlatList} 
-          data={members}
+          data={meet}
           keyExtractor={(item)=>item.id}
           renderItem={renderItem}
-          ListEmptyComponent={<Label style={styles.empty} text={"Aucun membre"}/>}
+          ListEmptyComponent={<Label style={styles.empty} text={"Aucune réunion"}/>}
           />
       </SafeAreaView>
   );

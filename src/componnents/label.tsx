@@ -1,10 +1,10 @@
 import React from "react";
 import { Text,StyleSheet, View } from "react-native";
 
-export default function Label({text,value,textStyle={},valueStyle={},style}){
+export default function Label({text,value,numberOfLines,ellipsizeMode,textStyle={},valueStyle={},style}){
     return(
         <View style={[styles.container,style]}>
-            <Text style={[styles.text,textStyle]}>{text}</Text>
+            <Text style={[styles.text,textStyle]} numberOfLines={numberOfLines} ellipsizeMode={ellipsizeMode}>{text}</Text>
             {value !== undefined && value !== null && value !== '' && (<Text style={[styles.value, valueStyle]}>{value}</Text>)}
         </View>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { TextInput ,StyleSheet, Text} from "react-native";
+import { TextInput ,StyleSheet, Text, KeyboardAvoidingView} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -11,18 +11,23 @@ export default function TextInputField({
   keyboardType,
   style,
   labelStyle,
-  inputStyle}){
+  inputStyle,
+  placeholderColor
+}){
   return(
     
-    <SafeAreaView style={[styles.container,style]}>
+    <SafeAreaView  style={[styles.container,style]}>
       {label && <Text style={[labelStyle]}>{label}</Text>}
-        <TextInput
+       <KeyboardAvoidingView>
+         <TextInput
           style={[styles.input,inputStyle]}
           onChangeText={onChangeText}
           value={value}
           placeholder={placeholder}
           keyboardType={keyboardType}
+          placeholderTextColor={placeholderColor}
         />
+       </KeyboardAvoidingView>
       </SafeAreaView>
   )
 }

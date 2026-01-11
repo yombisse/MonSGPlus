@@ -15,6 +15,11 @@ import AboutScreen from './src/screens/AboutScreen';
 import HelpScreen from './src/screens/HelpScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import MeetScreen from './src/screens/MeetScreen';
+import CreateMeetScreen from './src/screens/CreateMeetScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
+import MeetListScreen from './src/screens/MeetListScreen';
+import MeetDetailScreen from './src/screens/MeetDetailScreen';
 
 
 const Stack=createStackNavigator();
@@ -26,12 +31,22 @@ function MemberStack(navigation){
   return(
 
     <Stack.Navigator >
-      <Stack.Screen name='Members' component={MembersListScreen} 
+      <Stack.Screen name='Dashboard' component={DashboardScreen} 
+       options={{headerShown:false}}/>
+      <Stack.Screen name='Meets' component={MeetListScreen} 
+       options={{headerShown:false}}/>
+       <Stack.Screen name='MeetDetails' component={MeetDetailScreen} 
+       options={{headerShown:false}}/>
+       <Stack.Screen name='Members' component={MembersListScreen} 
        options={{headerShown:false}}/>
       <Stack.Screen name='MemberForm' component={MembersFormScreen}
       options={{ title: "Ajouter / Modifier" ,headerShown:true}} />
       <Stack.Screen name='MemberDetail' component={MembersDetailsScreen}
       options={{ title: "Details du membre",headerShown:true }} />
+      <Stack.Screen name='CreateMeet' component={CreateMeetScreen}
+      options={{ title: "Planifier une reuinion",headerShown:true }} />
+      <Stack.Screen name='ParticipateMeet' component={MeetScreen}
+      options={{ title: "Participer a une reuinion",headerShown:true }} />
     </Stack.Navigator>
 
   );
@@ -58,6 +73,7 @@ function MainTab(){
         tabBarActiveTintColor: '#1E3A8A',
         tabBarInactiveTintColor: '#111827',
         headerShown:false,
+        tabBarHideOnKeyboard:true,
       })
     }
     >
