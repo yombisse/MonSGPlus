@@ -1,93 +1,39 @@
 import { Alert, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import MyButton from '../componnents/button'
 import Label from '../componnents/label'
 import TextInputField from '../componnents/InputField'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { getData } from '../storage/membersStorage'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-
-const STORAGE_KEY='@monsgplus/users'
-const CURRENT_USER_STORAGE_KEY='@monsgplus/current_users'
-
-
-export function Logout({navigation}) {
-   
-        Alert.alert("Deconnexion","Voulez vous vraimment vous deconnectez?",[
-            {
-                text:"annuler", style:'cancel',
-                
-            },
-            {
-                text:"oui",style:'destructive', onPress:()=>{navigation.navigate('Login')}
-            }
-
-        ])
-    }
-    
-    
-
-const LoginScreen = ({navigation}) => {
+import { addData } from '../storage/membersStorage'
+const STORAGE_KEY="@monsgplus/users"
+const SigninScreen = ({navigation}) => {
+    const [nom,setNom]=useState('');
+    const [prenom,setPrenom]=useState('');
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('')
-    const [data,setData]=useState([])
-    const [erreur,setErreur]=useState('')
+    const [confirmpassword,setConfirmpassword]=useState('');
 
-     async function loadData() {
-        try {
-            const list=await getData(STORAGE_KEY)
-            setData(list);
-            console.log("donnes chargee avec succces",list)
-        } catch (error) {
-            console.warn("erreur de chargement de donnes",error)
-            
+    async function Ajouter() {
+            await addData(STORAGE_KEY,{nom,prenom,email,password})
+            console.log("inscription avec succes")
+    }
+    function inscrisption(){
+        
+        if(!nom.trim() || !prenom.trim() || !email.trim() || !password.trim() || !confirmpassword.trim()){
+            Alert.alert("Alert","formulaire invalid! Veuillez renseigner tous les champs du formulaire.")
+               
         }
-    }
-
-    useEffect(()=>{
-        loadData()
-    },[])
-
-   
-    
-    async function Connexion() {
-  if (!email.trim() || !password.trim()) {
-    Alert.alert('Erreur', "Veuillez renseigner les champs !");
-    return;
-  }
-
-  try {
-    // Charger les données
-    const list = await getData(STORAGE_KEY);
-    console.log("Données chargées:", list);
-
-    // Si c'est un tableau
-    if (Array.isArray(list)) {
-      // Vérifier le premier utilisateur (pour tester sans find)
-      const firstUser = list[0];
-      if (firstUser && firstUser.email === email && firstUser.password === password) {
-        await AsyncStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(firstUser));
-        navigation.navigate('Home');
-      } else {
-        setErreur("Email ou mot de passe incorrect");
-      }
-    } 
-    // Si c'est un objet unique
-    else if (list && list.email === email && list.password === password) {
-      await AsyncStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(list));
-      navigation.navigate('Home');
-    } 
-    else {
-      setErreur("Email ou mot de passe incorrect");
-    }
-  } catch (error) {
-    console.warn("Erreur connexion", error);
-    setErreur("Impossible de vérifier les identifiants");
-  }
-}
-
-
-
+        else  if(password!==confirmpassword){
+            Alert.alert('Confirmer','Mode de passe de confirmation different du mot de passe saisi!')
+                   
+         }
+       else{
+            Ajouter()
+            Alert.alert('Succes','Inscription effectuee!')
+            navigation.goBack();
+        
+            }
+        }
 
     
   return (
@@ -97,23 +43,42 @@ const LoginScreen = ({navigation}) => {
                 resizeMode="cover" // ou "contain", "stretch" 
                 >
             <View style={styles.overlay}>
-                <Label text={"Connectez-Vous"} style={styles.LabelContainer} textStyle={styles.title}/>
+                <Label text={"Veuillez vous inscrire ici"} style={styles.LabelContainer} textStyle={styles.title}/>
 
             
                 <View style={styles.MainFormContainer}>
+                    <TextInputField 
+                        label={"Nom"} 
+                        value={nom} 
+                        onChangeText={(text)=>setNom(text)} 
+                        placeholder={"Fandie"} 
+                        labelStyle={styles.FormLabel}
+                        style={styles.FormContainer}
+                        inputStyle={styles.input}
+                    
+                    />
+                    <TextInputField 
+                        label={"Prénom"} 
+                        value={prenom} 
+                        onChangeText={(text)=>setPrenom(text)} 
+                        placeholder={'Entrer votre prenom'}
+                        inputStyle={styles.input}
+                        labelStyle={styles.FormLabel}
+                        style={styles.FormContainer}
+                        />
                     <TextInputField 
                     label={"Email"} 
                     value={email} 
                     onChangeText={(text)=>setEmail(text)} 
                     placeholder={"example@gmail.com"} 
-                    keyboardType={'email-address'} 
+                    keyboardType={'email-text'} 
                     labelStyle={styles.FormLabel}
                     style={styles.FormContainer}
                     inputStyle={styles.input}
                     
                     />
                     <TextInputField 
-                        label={"Password"} 
+                        label={"Mot de passe"} 
                         value={password} 
                         onChangeText={(text)=>setPassword(text)} 
                         placeholder={'Entrer votre mot de passe'}
@@ -121,19 +86,29 @@ const LoginScreen = ({navigation}) => {
                         labelStyle={styles.FormLabel}
                         style={styles.FormContainer}
                         />
-                    {erreur?<Text style={{textAlign:'center',color:'red'}}>{erreur}</Text> :null}
+
+                    <TextInputField 
+                        label={"Confirmer Mot de passe"} 
+                        value={confirmpassword} 
+                        onChangeText={(text)=>setConfirmpassword(text)} 
+                        placeholder={'confirmer votre mot de passe'}
+                        inputStyle={styles.input}
+                        labelStyle={styles.FormLabel}
+                        style={styles.FormContainer}
+                        />
+                    <MyButton 
+                        label={"S'inscrire"}  
+                        onpress={inscrisption} 
+                        style={styles.button}
+                        labelStyle={styles.buttonLabel}
+                    />
                     <MyButton 
                         label={"Se connecter"}  
-                        onpress={Connexion} 
+                        onpress={()=>navigation.navigate('Login')} 
                         style={styles.button}
                         labelStyle={styles.buttonLabel}
                     />
-                    <MyButton 
-                        label={"S'inscrire "}  
-                        onpress={()=>navigation.navigate('SignIn')} 
-                        style={styles.button}
-                        labelStyle={styles.buttonLabel}
-                    />
+                    
                 </View>
             
                 
@@ -144,7 +119,7 @@ const LoginScreen = ({navigation}) => {
   )
 }
 
-export default LoginScreen
+export default SigninScreen
 
 const styles = StyleSheet.create({
     Container:{
@@ -188,8 +163,7 @@ const styles = StyleSheet.create({
     },
     FormContainer:{
         justifyContent:'center',
-        paddingLeft:10,
-        paddingRight:10,
+        paddingHorizontal:10,
         alignItems:'center'
     },
     FormLabel:{
@@ -200,7 +174,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignSelf:'center',
         backgroundColor:'#ffffffb4',
-        marginTop:200,
+        margin:40,
         borderStyle:'solid',
         borderWidth:3,
         borderColor:'#1E3A8A',

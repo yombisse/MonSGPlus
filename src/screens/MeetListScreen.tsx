@@ -10,11 +10,13 @@ import SearchBar from '../componnents/searchbar';
 
 export default function MembersListScreen({navigation}) {
   const STORAGE_KEY="@monsgplus/meets"
-  const [meet, seMeet]=useState([]);
+  const [meet, setMeet]=useState([]);
+  const [search, setSearch]=useState('');
+
   const loadData=async()=>{
     try {
       const list= await getData(STORAGE_KEY);
-      seMeet(list);
+      setMeet(list);
       console.log("Reunions chargés:", list);
 
       
@@ -53,6 +55,11 @@ export default function MembersListScreen({navigation}) {
   }
   // Ou import { Ionicons } from '@expo/vector-icons';
 
+    const results = () => {
+  return meet.filter(m => 
+    m.titre?.toLowerCase().includes(search.toLowerCase()) 
+  );
+};
 const renderItem = ({ item }) => (
   <TouchableOpacity 
     style={styles.item} 
@@ -90,18 +97,20 @@ const renderItem = ({ item }) => (
   </TouchableOpacity>
 );
 
+
+ const filteredMeets = results();
   
   return (
     
       <SafeAreaView style={styles.container}>
-        <SearchBar type={'meets'}/>
         <Label text={"Liste des réunions"} style={styles.Header}/>
+        <SearchBar type={'meets'} value={search} onChange={setSearch}/>
        
         
-         
+        
         <FlatList
           style={styles.FlatList} 
-          data={meet}
+          data={filteredMeets}
           keyExtractor={(item)=>item.id}
           renderItem={renderItem}
           ListEmptyComponent={<Label style={styles.empty} text={"Aucune réunion"}/>}

@@ -8,6 +8,10 @@ const Styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
     padding: 20,
   },
+  body:{
+    flex:5,
+    backgroundColor: '#F9FAFB',
+  },
   header: {
     fontSize: 22,
     fontWeight: 'bold',

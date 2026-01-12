@@ -5,34 +5,28 @@ import MyButton from '../componnents/button';
 import Label from '../componnents/label';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getData,deleteData,updateData} from '../storage/membersStorage'
+import SearchBar from '../componnents/searchbar';
 
 export default function MembersListScreen({navigation}) {
   const STORAGE_KEY="@monsgplus/members"
   const [members, setMembers]=useState([]);
-  const loadData=async()=>{
+  const [search, setSearch]=useState('');
+
+   const loadData=async()=>{
     try {
       const list= await getData(STORAGE_KEY);
       setMembers(list);
       console.log("Membres chargés:", list);
-
-      
     } catch (error) {
       console.error("Erreur de recuperation de donnees",error);
       
     };
   }
-
-    useEffect(()=>{
+  useEffect(()=>{
       loadData();
       const unsubscribe= navigation.addListener('focus',loadData);
       return unsubscribe;
     },[navigation]);
-
-  
-  // const confirmDelete= async(id)=>{
-  //   await deleteMember(id);
-  //   await loadData();
-  // }
 
   const onDelete= async (id)=>{
     Alert.alert('Supprimer','Confirmer la suppression?',[
@@ -42,64 +36,66 @@ export default function MembersListScreen({navigation}) {
         loadData();}}
     ]);
   };
-  const onEdit=async(id)=>{
-    updateData(STORAGE_KEY,id);
+  
 
-  }
   function handlePress(){
     navigation.navigate('MemberForm')
   }
-  // Ou import { Ionicons } from '@expo/vector-icons';
 
-const renderItem = ({ item }) => (
-  <TouchableOpacity 
-    style={styles.item} 
-    onPress={() => navigation.navigate('MemberDetail', { member: item })}
-  >
-    <View style={styles.MemberRow}>
-      {/* 1. Image Profil */}
-      <Image source={require('../assets/logo.png')} style={styles.profile} />
+  const results=()=>{
+  return members.filter(m=> m.nom?.toLowerCase().includes(search.toLowerCase()))
+  
+ }
+  const filteredMembers=results();
 
-      {/* 2. Conteneur Central (Nom + Statut) */}
-      <View style={styles.centerContent}>
-        <Text style={styles.nom} numberOfLines={2}>
-          {item.nom} {item.prenom}
-        </Text>
-        <View style={styles.statutBadge}>
-          <Text style={styles.statutText}>{item.statut}</Text>
+  const renderItem = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.item} 
+      onPress={() => navigation.navigate('MemberDetail', { member: item })}
+    >
+      <View style={styles.MemberRow}>
+        {/* 1. Image Profil */}
+        <Image source={require('../assets/logo.png')} style={styles.profile} />
+
+        {/* 2. Conteneur Central (Nom + Statut) */}
+        <View style={styles.centerContent}>
+          <Text style={styles.nom} numberOfLines={2}>
+            {item.nom} {item.prenom}
+          </Text>
+          <View style={styles.statutBadge}>
+            <Text style={styles.statutText}>{item.statut}</Text>
+          </View>
+        </View>
+
+        {/* 3. Groupe de Boutons d'action */}
+        <View style={styles.actionButtons}>
+          <TouchableOpacity 
+            style={styles.iconButton} 
+            onPress={()=>navigation.navigate('MemberForm', { member: item })}
+          >
+            <Ionicons name="create-outline" size={24} color="#4A90E2" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.iconButton} 
+            onPress={() => onDelete(item.id)}
+          >
+            <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+          </TouchableOpacity>
         </View>
       </View>
-
-      {/* 3. Groupe de Boutons d'action */}
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={()=>navigation.navigate('MemberForm', { member: item })}
-        >
-          <Ionicons name="create-outline" size={24} color="#4A90E2" />
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={() => onDelete(item.id)}
-        >
-          <Ionicons name="trash-outline" size={24} color="#FF3B30" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
 
   
   return (
-    
       <SafeAreaView style={styles.container}>
         <Label text={"Liste des membres"} style={styles.Header}/>
+        <SearchBar type={'members'} value={search} onChange={setSearch}/>
         <MyButton icon='add' iconStyle={styles.Icon} labelStyle={styles.buttonText} style={styles.button} onpress={handlePress}/>
-         
         <FlatList
           style={styles.FlatList} 
-          data={members}
+          data={filteredMembers}
           keyExtractor={(item)=>item.id}
           renderItem={renderItem}
           ListEmptyComponent={<Label style={styles.empty} text={"Aucun membre"}/>}

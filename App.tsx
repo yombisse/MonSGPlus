@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, View ,StyleSheet,Image} from 'react-native';
+import { Text, View ,StyleSheet,Image, Alert} from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { HeaderBackButton } from '@react-navigation/elements';
 import MembersListScreen from './src/screens/MembersListScreen';
@@ -11,7 +11,7 @@ import MembersFormScreen from './src/screens/MembersFormScreen';
 import MembersDetailsScreen from './src/screens/MembersDetailsScreen';
 import StatsScreen from './src/screens/StatsScreen';
 import SettingScreen from './src/screens/SettingScreen';
-import AboutScreen from './src/screens/AboutScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import HelpScreen from './src/screens/HelpScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
@@ -20,6 +20,8 @@ import CreateMeetScreen from './src/screens/CreateMeetScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import MeetListScreen from './src/screens/MeetListScreen';
 import MeetDetailScreen from './src/screens/MeetDetailScreen';
+import SigninScreen from './src/screens/SigninScreen';
+import { LogoutScreen } from './src/screens/LoginScreen';
 
 
 const Stack=createStackNavigator();
@@ -99,13 +101,64 @@ function WelcomeStack(){
     <Stack.Navigator>
         <Stack.Screen name='WelcomeScreen' component={WelcomeScreen}  options={{headerShown:false}} />
         <Stack.Screen name='Login' component={LoginScreen} />
+        <Stack.Screen name='SignIn' component={SigninScreen} />
+
     </Stack.Navigator>
   )
 }
 
+// function AuthStack() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen name="Login" component={LoginScreen} />
+//       <Stack.Screen name="SignIn" component={SigninScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+// function AppNavigator() {
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+//   return (
+//     <NavigationContainer>
+//       {isLoggedIn ? <HomeDrawer /> : <AuthStack />}
+//     </NavigationContainer>
+//   );
+// }
+
+
 function HomeDrawer(){
+
   return(
-    <Drawer.Navigator  screenOptions={{
+    <Drawer.Navigator 
+      drawerContent={(props) => (
+        <DrawerContentScrollView {...props}>
+          <DrawerItem label="Home" onPress={() => props.navigation.navigate('Home')}
+          />
+          <DrawerItem label="Profile" onPress={() => props.navigation.navigate('Mon Profile')}
+          />
+          <DrawerItem label={"Statistiques"} onPress={()=>props.navigation.navigate('Stats')}/>
+          <DrawerItem label={"Paramètres"} onPress={()=>props.navigation.navigate('Settings')}/>
+          <DrawerItem label={"Support"} onPress={()=>props.navigation.navigate('Help')}/>
+          <DrawerItem label="Déconnexion" onPress={() => {
+              Alert.alert(
+                "Déconnexion",
+                "Voulez-vous vraiment vous déconnecter ?",
+                [
+                  { text: "Annuler", style: "cancel" },
+                  {
+                    text: "Oui",
+                    style: "destructive",
+                    onPress: () => props.navigation.navigate('Login'),
+                  },
+                ]
+              );
+            }}
+          />
+        </DrawerContentScrollView>
+      )}
+    
+    screenOptions={{
           headerStyle:{
               backgroundColor:"#1E3A8A",
               height:100,
@@ -117,7 +170,9 @@ function HomeDrawer(){
           <Drawer.Screen name='Home' component={MainTab} options={{ headerShown: true, headerTintColor:'#fff', title: "Accueil",
            
            }} />
-          <Drawer.Screen name='About' component={AboutScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='Mon Profile' component={ProfileScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='Stats' component={StatsScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='Settings' component={SettingScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Help' component={HelpScreen} options={{headerShown:false}}/>
         </Drawer.Navigator>
   )

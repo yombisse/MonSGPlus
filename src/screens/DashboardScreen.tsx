@@ -39,6 +39,31 @@ const DashboardScreen = ({navigation}) => {
   const totalMembers = members.length;
   const totalMeets = meets.length;
   const nextMeet = meets.length > 0 ? meets[0] : null;
+  // Fonction pour obtenir le numéro de semaine d'une date
+function getWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7; // dimanche = 7
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+// Fonction principale pour regrouper par semaine
+function getWeeklyCounts(meet) {
+  const counts = {};
+  meet.forEach(m => {
+    const date = new Date(m.date);
+    const week = `S${getWeekNumber(date)}`; // Exemple: "S1", "S2", ...
+    counts[week] = (counts[week] || 0) + 1;
+  });
+
+  return Object.entries(counts).map(([week, count]) => ({
+    value: count,
+    label: week,
+  }));
+}
+const chartData=getWeeklyCounts(meets);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,25 +72,22 @@ const DashboardScreen = ({navigation}) => {
         <Label text={"Tableau de bord"} textStyle={styles.Title}/>
         <Label text={"Bonjour, secrétaire"} textStyle={styles.Subtitle}/>
 
-        {/* Graphique */}
         <View style={styles.chartContainer}>
-          <LineChart 
-            data={data}
-            areaChart
-            curved
-            thickness={3}
-            color="#1E3A8A"
-            startFillColor="#2563EB"
-            endFillColor="#2563EB"
-            startOpacity={0.4}
-            endOpacity={0.1}
-            hideDataPoints={false}
-            dataPointsColor="#2563EB"
-            yAxisTextStyle={{ color: '#6B7280' }}
-            xAxisLabelTextStyle={{ color: '#6B7280' }}
-            backgroundColor="#F9FAFB"
-          />
-        </View>
+          <LineChart
+              data={chartData}
+              height={200}
+              width={300}
+              color="#1E3A8A"
+              thickness={3}
+              hideDataPoints={false}
+              dataPointsColor="#4A90E2"
+              showVerticalLines
+              spacing={40}
+              initialSpacing={20}
+              yAxisColor="#ccc"
+              xAxisColor="#ccc"
+            />
+          </View>
 
         {/* Cartes stats */}
         <View style={{flexDirection:'row'}}>
