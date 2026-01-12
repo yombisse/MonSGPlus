@@ -5,6 +5,8 @@ import MyButton from '../componnents/button';
 import Label from '../componnents/label';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getData,deleteData,updateData} from '../storage/membersStorage'
+import TextInputField from '../componnents/InputField';
+import SearchBar from '../componnents/searchbar';
 
 export default function MembersListScreen({navigation}) {
   const STORAGE_KEY="@monsgplus/meets"
@@ -57,8 +59,6 @@ const renderItem = ({ item }) => (
     onPress={() => navigation.navigate('MeetDetails', { meet: item })}
   >
     <View style={styles.MemberRow}>
-      {/* 1. Image Profil */}
-      <Image source={require('../assets/logo.png')} style={styles.profile} />
 
       {/* 2. Conteneur Central (Nom + Statut) */}
       <View style={styles.centerContent}>
@@ -94,8 +94,10 @@ const renderItem = ({ item }) => (
   return (
     
       <SafeAreaView style={styles.container}>
-        <Label text={"Liste des membres"} style={styles.Header}/>
-        <MyButton icon='add' iconStyle={styles.Icon} labelStyle={styles.buttonText} style={styles.button} onpress={handlePress}/>
+        <SearchBar type={'meets'}/>
+        <Label text={"Liste des réunions"} style={styles.Header}/>
+       
+        
          
         <FlatList
           style={styles.FlatList} 
@@ -104,6 +106,10 @@ const renderItem = ({ item }) => (
           renderItem={renderItem}
           ListEmptyComponent={<Label style={styles.empty} text={"Aucune réunion"}/>}
           />
+        <View style={styles.buttonRow}>
+          <MyButton label={"Planifier une réunion"} labelStyle={styles.buttonText} style={styles.button} onpress={handlePress}/>
+          <MyButton label={"Participer à une réunion"} labelStyle={styles.buttonText} style={styles.button} onpress={()=>navigation.navigate('ParticipateMeet')}/>
+        </View>
       </SafeAreaView>
   );
 
@@ -114,9 +120,8 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     flex:1,
-
     borderColor:'#000',
-    padding:10
+    padding:5
 
   },
   Header:{
@@ -131,18 +136,18 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
   },
    button:{
-        backgroundColor:'#1E3A8A',
-        width:50,
+      backgroundColor:'#1E3A8A',
+        width:140,
         height:50,
-        borderRadius:15,
+        borderRadius:5,
         alignItems:'center',
-        marginLeft:300,
-        marginBottom:10,
+        margin:5,
 
     },
     buttonText:{
       color:"#FFF",
-      fontSize:16,
+      fontSize:12,
+      textAlign:'center',
     },
     item:{
       alignItems:'center',
@@ -155,16 +160,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     backgroundColor: '#fff',
-    borderRadius: 10,
-    // Ombre
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    marginVertical: 6,
+    borderRadius: 0,
+    borderBottomWidth:1,
+    elevation:2,
+    marginVertical: 2,
     width: '100%',
   },
+  searchBar: {
+  backgroundColor: '#FFF',
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: '#D1D5DB',
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  marginBottom: 15,
+},
   profile: {
     width: 50,
     height: 50,
@@ -218,5 +228,40 @@ const styles = StyleSheet.create({
       backgroundColor:'white'
       
      
-    }
+    },
+    buttonRow:{
+      flexDirection:'row',
+      justifyContent:'space-between',
+      margin:10,
+    },
+    meetingRow: {
+  backgroundColor: '#FFF',
+  borderRadius: 8,
+  padding: 12,
+  marginBottom: 10,
+  borderWidth: 1,
+  borderColor: '#E5E7EB',
+},
+meetingTitle: {
+  fontSize: 16,
+  fontWeight: '600',
+  color: '#111827',
+},
+meetingInfo: {
+  fontSize: 14,
+  color: '#6B7280',
+  marginTop: 4,
+},
+statusBadge: {
+  alignSelf: 'flex-start',
+  backgroundColor: '#2563EB',
+  paddingHorizontal: 10,
+  paddingVertical: 4,
+  borderRadius: 20,
+},
+statusText: {
+  color: '#FFF',
+  fontSize: 12,
+  fontWeight: '600',
+},
 });

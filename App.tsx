@@ -31,18 +31,26 @@ function MemberStack(navigation){
   return(
 
     <Stack.Navigator >
-      <Stack.Screen name='Dashboard' component={DashboardScreen} 
-       options={{headerShown:false}}/>
-      <Stack.Screen name='Meets' component={MeetListScreen} 
-       options={{headerShown:false}}/>
-       <Stack.Screen name='MeetDetails' component={MeetDetailScreen} 
-       options={{headerShown:false}}/>
        <Stack.Screen name='Members' component={MembersListScreen} 
        options={{headerShown:false}}/>
       <Stack.Screen name='MemberForm' component={MembersFormScreen}
       options={{ title: "Ajouter / Modifier" ,headerShown:true}} />
       <Stack.Screen name='MemberDetail' component={MembersDetailsScreen}
       options={{ title: "Details du membre",headerShown:true }} />
+      
+    </Stack.Navigator>
+
+  );
+}
+
+function MeetStack(navigation){
+  return(
+
+    <Stack.Navigator >
+      <Stack.Screen name='Meets' component={MeetListScreen} 
+       options={{headerShown:false}}/>
+       <Stack.Screen name='MeetDetails' component={MeetDetailScreen} 
+       options={{headerShown:false}}/>
       <Stack.Screen name='CreateMeet' component={CreateMeetScreen}
       options={{ title: "Planifier une reuinion",headerShown:true }} />
       <Stack.Screen name='ParticipateMeet' component={MeetScreen}
@@ -59,14 +67,15 @@ function MainTab(){
       screenOptions={({route})=>({
         tabBarIcon:({focused,color,size})=>{
           let iconName;
-          if(route.name==='Members'){
+          if (route.name==='Dashboard'){
+            iconName=focused? 'home' : 'home-outline';
+          }
+          
+          else if(route.name==='Members'){
             iconName=focused? 'people' : 'people-outline';
           }
-          else if (route.name==='Stats'){
-            iconName=focused? 'stats-chart' : 'stats-chart-outline';
-          }
-          else{ if(route.name==='Settings')
-            iconName= focused? 'settings' : 'settings-outline';
+          else{ if(route.name==='Meets')
+            iconName= focused? 'calendar' : 'calendar-outline';
           }
           return <Ionicons name={iconName} size={size} color={color}/>;
         },
@@ -77,9 +86,9 @@ function MainTab(){
       })
     }
     >
-      <Tab.Screen name='Members' component={MemberStack} options={{ headerShown: false, title: "Accueil" }} />
-      <Tab.Screen name='Stats' component={StatsScreen}/>
-      <Tab.Screen name='Settings' component={SettingScreen}/>
+      <Tab.Screen name='Dashboard' component={DashboardScreen} options={{ headerShown: false, title: "Accueil" }} />
+      <Tab.Screen name='Members' component={MemberStack}/>
+      <Tab.Screen name='Meets' component={MeetStack}/>
     </Tab.Navigator>
 
   );
@@ -88,7 +97,7 @@ function MainTab(){
 function WelcomeStack(){
   return(
     <Stack.Navigator>
-        <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
+        <Stack.Screen name='WelcomeScreen' component={WelcomeScreen}  options={{headerShown:false}} />
         <Stack.Screen name='Login' component={LoginScreen} />
     </Stack.Navigator>
   )
@@ -101,11 +110,12 @@ function HomeDrawer(){
               backgroundColor:"#1E3A8A",
               height:100,
               padding:5,
+              paddingVertical: 20,
+              alignItems: 'center',
+              
           }}}>
-          <Drawer.Screen name='Home' component={MainTab} options={{ headerShown: true, title: "Accueil",
-            headerTitle: () => (               // ✅ logo au centre
-            <Image source={require('./src/assets/logo.png')} style={styles.logo} resizeMode="contain" />
-          ),
+          <Drawer.Screen name='Home' component={MainTab} options={{ headerShown: true, headerTintColor:'#fff', title: "Accueil",
+           
            }} />
           <Drawer.Screen name='About' component={AboutScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Help' component={HelpScreen} options={{headerShown:false}}/>

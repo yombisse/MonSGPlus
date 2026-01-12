@@ -1,20 +1,31 @@
 import { Alert, StyleSheet, ScrollView, View } from 'react-native';
-import React,{ useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { addData } from '../storage/membersStorage';
+import { addData, updateData } from '../storage/membersStorage';
 import Label from '../componnents/label';
 import TextInputField from '../componnents/InputField';
 import MyButton from '../componnents/button';
 import { Picker } from '@react-native-picker/picker'; // ✅ import du Picker
 
-const CreateMeetScreen = ({navigation}) => {
+const CreateMeetScreen = ({navigation,route}) => {
   const STORAGE_KEY="@monsgplus/meets"
+  const Meets=route.params?.meet;
   const [titre,setTitre]=useState("");
   const [lieu,setLieu]=useState("");
   const [date,setDate]=useState("");
   const [heure,setHeure]=useState("");
   const [statut,setStatut]=useState(" "); // ✅ valeur par défaut
 
+
+  useEffect(()=>{
+    if(Meets){
+    setTitre(Meets.titre);
+    setLieu(Meets.lieu);
+    setDate(Meets.date);
+    setHeure(Meets.heure);
+    setStatut(Meets.statut);
+    }
+  },[])
   const validate=()=>{
     if(!titre.trim() || !lieu.trim() || !date.trim() || !heure.trim()){
       return 'Tous les champs de saisie sont obligatoires';
@@ -27,6 +38,9 @@ const CreateMeetScreen = ({navigation}) => {
     if(err){
       Alert.alert('Validation',err);
       return ;
+    }
+    else if(Meets){
+      await updateData(STORAGE_KEY,Meets.id,{titre,lieu,date,heure,statut})
     }
     else{
       await addData(STORAGE_KEY,{titre,lieu,date,heure,statut});
@@ -96,7 +110,7 @@ const CreateMeetScreen = ({navigation}) => {
         </View>
 
         <MyButton  
-          label={'Ajouter'} 
+          label={Meets?'Modifier':'Ajouter'} 
           style={styles.Addbutton} 
           onpress={Ajouter}
         />
