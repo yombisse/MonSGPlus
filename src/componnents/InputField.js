@@ -12,7 +12,8 @@ export default function TextInputField({
   style,
   labelStyle,
   inputStyle,
-  placeholderColor
+  placeholderColor,
+  secureTextEntry
 }){
   return(
     
@@ -26,6 +27,7 @@ export default function TextInputField({
           placeholder={placeholder}
           keyboardType={keyboardType}
           placeholderTextColor={placeholderColor}
+          secureTextEntry={secureTextEntry}
         />
        </KeyboardAvoidingView>
       </SafeAreaView>
