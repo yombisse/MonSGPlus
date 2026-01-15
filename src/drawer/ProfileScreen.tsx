@@ -30,7 +30,6 @@ export default function ProfileScreen({navigation}) {
   },[navigation])
 
   
-  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>

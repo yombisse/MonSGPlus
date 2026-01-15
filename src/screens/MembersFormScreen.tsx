@@ -5,6 +5,7 @@ import Label from '../componnents/label';
 import TextInputField from '../componnents/InputField';
 import { addData,getData,updateData } from '../storage/membersStorage';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ChoicePicker from '../componnents/choicePicker';
 
 export default function MembersFormScreen({route,navigation}) {
   const STORAGE_KEY="@monsgplus/members"
@@ -15,6 +16,22 @@ export default function MembersFormScreen({route,navigation}) {
   const [addresse,setAddresse]=useState("");
   const [contact,setContact]=useState("");
   const [statut,setStatut]=useState("");
+  const [email,setEmail]=useState("");
+  const [departement,setDepartement]=useState("");
+  const STATUT=[{label:"Actif",value:"actif"},{label:"Inactif",value:"inactif"}]
+
+  const newMembre={
+    nom,
+    prenom,
+    filiere,
+    addresse,
+    contact,
+    statut,
+    email,
+    departement,
+    dateCreation:new Date().toISOString()
+
+  }
 
   useEffect(() => {
     if (Member) {
@@ -24,10 +41,12 @@ export default function MembersFormScreen({route,navigation}) {
       setAddresse(Member.addresse);
       setContact(Member.contact);
       setStatut(Member.statut);
+      setEmail(Member.email);
+      setDepartement(Member.departement);
     }
   }, [Member]);
   const validate=()=>{
-    if(!nom.trim() || !prenom.trim() || !filiere.trim() || !addresse.trim() || !contact.trim() || !statut.trim()){
+    if(!nom.trim() || !prenom.trim() || !filiere.trim() || !addresse.trim() || !contact.trim() || !statut.trim() || !email.trim() || !departement.trim()){
       return 'Tous les champs de saisi sont obligatoires'
 
     }
@@ -40,12 +59,12 @@ export default function MembersFormScreen({route,navigation}) {
       return ;
     }
     else if (Member){
-      await updateData(STORAGE_KEY,Member.id ,{nom,prenom,filiere,addresse,contact,statut})
+      await updateData(STORAGE_KEY,Member.id ,newMembre);
       console.warn("Membre modifier avec succes")
       
     }
     else{
-      await addData(STORAGE_KEY,{nom,prenom,filiere,addresse,contact,statut});
+      await addData(STORAGE_KEY,newMembre);
     }
     navigation.goBack()
   }
@@ -56,12 +75,23 @@ export default function MembersFormScreen({route,navigation}) {
         <Label text={"Ajouter un nouvel membre"} style={styles.Titlelabel}/>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}  >
-          <TextInputField label="Nom" value={nom} placeholder={"Entrer votre nom"} onChangeText={(text)=>setNom(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
-          <TextInputField label="Prenom" value={prenom} placeholder={"Entrer votre prenom"} onChangeText={(text)=>setPrenom(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
-          <TextInputField label="Filiere" value={filiere} placeholder={"Entrer votre filere"} onChangeText={(text)=>setFiliere(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
-          <TextInputField label="Addresse" value={addresse} placeholder={"Entrer votre quartier"} onChangeText={(text)=>setAddresse(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
-          <TextInputField label="Contact" value={contact} placeholder={"Entrer votre contact"} onChangeText={(text)=>setContact(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} keyboardType={'numeric'}/>
-          <TextInputField label="Statut" value={statut} placeholder={"Entrer votre statut"} onChangeText={(text)=>setStatut(text)} inputStyle={styles.Input} labelStyle={styles.InputLabel} />
+          <TextInputField label="Nom" value={nom} placeholder={"Entrer votre nom"} onChangeText={(text)=>setNom(text)} style={styles.Input} />
+          <TextInputField label="Prenom" value={prenom} placeholder={"Entrer votre prenom"} onChangeText={(text)=>setPrenom(text)} style={styles.Input}  />
+          <TextInputField label="Filiere" value={filiere} placeholder={"Entrer votre filere"} onChangeText={(text)=>setFiliere(text)} style={styles.Input}  />
+          <TextInputField label="Addresse" value={addresse} placeholder={"Entrer votre quartier"} onChangeText={(text)=>setAddresse(text)} style={styles.Input}  />
+          <TextInputField label="Contact" value={contact} placeholder={"Entrer votre contact"} onChangeText={(text)=>setContact(text)} style={styles.Input}  keyboardType={'numeric'}/>
+          <TextInputField label="Email" value={email} placeholder={"Entrer votre e-mail"} onChangeText={(text)=>setEmail(text)} style={styles.Input}  keyboardType={'email-adress'}/>
+          <TextInputField label="Departement" value={departement} placeholder={"Entrer votre statut"} onChangeText={(text)=>setDepartement(text)} style={styles.Input}  />
+          
+          <Label text={"Statut"}/>
+          <View style={styles.picker}>
+            <ChoicePicker
+              typeEvent={null}
+              options={STATUT}
+              values={[statut]}
+              onChange={(val)=>setStatut(val[0])}
+              />
+          </View>
           <MyButton  icon={ ""} label={Member?'Modifier':'Ajouter'} style={styles.Addbutton} onpress={Ajouter}/>
       </ScrollView>
     </SafeAreaView>
@@ -98,7 +128,7 @@ const styles = StyleSheet.create({
   },
   Input:{
       width:300,
-      height:60,
+      height:40,
       padding:12,
       borderRadius:8,
       borderWidth:1,
@@ -106,14 +136,19 @@ const styles = StyleSheet.create({
       backgroundColor:'#FFF',
       alignSelf:'center',
        // Ombre
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    
     marginVertical: 6,
 
   
+    },
+    picker:{
+      width:300,
+      height:60,
+      borderWidth:2,
+      borderRadius:8,
+      paddingVertical:10,
+      borderColor:'#D1D5DB'
+
     },
   icon:{
     color:'#000',

@@ -42,6 +42,9 @@ export default function MembersDetailsScreen({ route }) {
           <InfoRow label="Adresse" value={member.addresse} />
           <Divider style={styles.divider} />
           <InfoRow label="Contact" value={member.contact} />
+          <InfoRow label="Email" value={member.email} />
+          <InfoRow label="Département" value={member.departement} />
+          <InfoRow label="Date d'ajout" value={member.dateCreation} />
         </View>
 
         {/* Section Statistiques */}

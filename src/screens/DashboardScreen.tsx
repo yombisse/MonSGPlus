@@ -1,34 +1,43 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import MyButton from '../componnents/button'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LineChart } from 'react-native-gifted-charts'
 import Label from '../componnents/label'
 import { getData } from '../storage/membersStorage'
+import {CURENT_USER} from '../componnents/constants'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getISOWeek } from 'date-fns';
 
-const data = [
-  { value: 3, label: 'Jan' },
-  { value: 5, label: 'Fév' },
-  { value: 2, label: 'Mar' },
-  { value: 6, label: 'Avr' },
-  { value: 4, label: 'Mai' },
-];
+ const CURRENT_USER_STORAGE_KEY='@monsgplus/users';
  const Members="@monsgplus/members";
- const Meets="@monsgplus/meets";
+ const Events="@monsgplus/events";
 const DashboardScreen = ({navigation}) => {
   const [members, setMembers] = useState([]);
-  const [meets, setMeets] = useState([]); // ✅ tableau vide
+  const [user, setUser] = useState([]);
+  const [events, setEvents] = useState([]); // ✅ tableau vide
 
-  async function loadMembers() {
-    try {
-      const membersData = await getData(Members);
-      setMembers(membersData || []);
-      const meetsData = await getData(Meets);
-      setMeets(meetsData || []);
-    } catch (error) {
-      console.warn("Erreur de chargement des données", error);
+  const CURRENT_USER_STORAGE_KEY='@monsgplus/current_users'; // ✅ corriger la clé
+
+async function loadMembers() {
+  try {
+    const membersData = await getData(Members);
+    setMembers(membersData || []);
+
+    const EventsData = await getData(Events);
+    setEvents(EventsData || []);
+
+    const json = await AsyncStorage.getItem(CURRENT_USER_STORAGE_KEY); 
+    if (json) { 
+      const parsedUser = JSON.parse(json);
+      setUser(parsedUser);
+      console.log("Utilisateur courant chargé:", parsedUser);
     }
+  } catch (error) {
+    console.warn("Erreur de chargement des données", error);
   }
+}
+
 
   useEffect(() => {
     loadMembers();
@@ -37,23 +46,24 @@ const DashboardScreen = ({navigation}) => {
   }, [navigation]);
 
   const totalMembers = members.length;
-  const totalMeets = meets.length;
-  const nextMeet = meets.length > 0 ? meets[0] : null;
-  // Fonction pour obtenir le numéro de semaine d'une date
-function getWeekNumber(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7; // dimanche = 7
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
+  const Meets = events.filter(e=>e.typeEvent?.toLowerCase()==='reunion');
+  const totalMeets=Meets.length
+  const nextMeet = Meets.length > 0 ? Meets[0] : null;
+  const Rendezvous = events.filter(e=>e.typeEvent?.toLowerCase()==='rendezvous');
+  const totalRendezvous=Rendezvous.length
+  const nextRendezvous = Rendezvous.length > 0 ? Rendezvous[0] : null;
+ 
+
 
 // Fonction principale pour regrouper par semaine
 function getWeeklyCounts(meet) {
   const counts = {};
   meet.forEach(m => {
-    const date = new Date(m.date);
-    const week = `S${getWeekNumber(date)}`; // Exemple: "S1", "S2", ...
+    // ⚠️ Si tes dates sont au format "dd-mm-yyyy", il faut les parser correctement
+    const [day, month, year] = m.date.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+
+    const week = `S${getISOWeek(date)}`; // Exemple: "S1", "S2", ...
     counts[week] = (counts[week] || 0) + 1;
   });
 
@@ -62,21 +72,23 @@ function getWeeklyCounts(meet) {
     label: week,
   }));
 }
-const chartData=getWeeklyCounts(meets);
+
+const chartData = getWeeklyCounts(Meets);
+
 
 
   return (
     <SafeAreaView style={styles.container}>
-
       <View style={styles.body}>
+        <ScrollView  contentContainerStyle={{padding:10,}}>
         <Label text={"Tableau de bord"} textStyle={styles.Title}/>
-        <Label text={"Bonjour, secrétaire"} textStyle={styles.Subtitle}/>
+        <Label text={`Bonjour, ${user?.prenom  ?? "Rien"}`} textStyle={styles.Subtitle}/>
 
         <View style={styles.chartContainer}>
           <LineChart
               data={chartData}
               height={200}
-              width={300}
+              width={250}
               color="#1E3A8A"
               thickness={3}
               hideDataPoints={false}
@@ -95,17 +107,22 @@ const chartData=getWeeklyCounts(meets);
             <Text style={styles.cardTitle}>{totalMembers}</Text>
             <Text style={styles.cardTitle}>Membres</Text>
           </View>
+          <View style={styles.Middlecard}>
+            <Text style={styles.cardTitle}>{totalRendezvous}</Text>
+            <Text style={styles.cardTitle}>RendezVous</Text>
+          </View>
           <View style={styles.Rightcard}>
             <Text style={styles.cardTitle}>{totalMeets}</Text>
             <Text style={styles.cardTitle}>Réunions</Text>
           </View>
+          
         </View>
 
         {/* Prochaine rencontre */}
         {nextMeet ? (
           <TouchableOpacity 
             style={styles.item} 
-            onPress={() => navigation.navigate('MeetDetails', { meet: nextMeet })}
+            onPress={() => navigation.navigate('Events', { screen: 'MeetDetails', params: { events: nextMeet }})}
           >
             <View style={styles.MemberRow}>
               <View style={styles.centerContent}>
@@ -123,6 +140,29 @@ const chartData=getWeeklyCounts(meets);
         ) : (
           <Text style={{marginTop:10}}>Aucune rencontre prévue</Text>
         )}
+
+        {nextRendezvous ? (
+          <TouchableOpacity 
+            style={styles.item} 
+            onPress={() => navigation.navigate('Events', { screen: 'MeetDetails', params: { events: nextRendezvous }})}
+          >
+            <View style={styles.MemberRow}>
+              <View style={styles.centerContent}>
+                <Text style={styles.nom} numberOfLines={2}>
+                  {nextRendezvous.titre}
+                </Text>
+                <View style={styles.statutBadge}>
+                  <Text style={styles.statutText}>{nextRendezvous.statut}</Text>
+                </View>
+              </View>
+              <Text style={{padding:5}}>{nextRendezvous.date}</Text>
+              <Text style={{padding:5}}>{nextRendezvous.heure}</Text>
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <Text style={{marginTop:10}}>Aucune rencontre prévue</Text>
+        )}
+      </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -157,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding:20,
+    
   },
   Leftcard: {
   flex: 1,
@@ -180,6 +220,18 @@ Rightcard: {
   shadowOpacity: 0.05,
   shadowRadius: 4,
   elevation: 2,
+},
+Middlecard:{
+  flex: 1,
+  backgroundColor: 'red',
+  borderRadius: 10,
+  padding: 15,
+  margin: 8,
+  shadowColor: '#000',
+  shadowOpacity: 0.05,
+  shadowRadius: 4,
+  elevation: 2,
+
 },
 cardTitle: {
   fontSize: 16,

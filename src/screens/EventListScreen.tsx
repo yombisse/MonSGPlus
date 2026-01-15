@@ -7,17 +7,28 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getData,deleteData,updateData} from '../storage/membersStorage'
 import TextInputField from '../componnents/InputField';
 import SearchBar from '../componnents/searchbar';
+import FilterTabs from '../componnents/filterTabs';
+import { Value } from 'react-native/types_generated/Libraries/Animated/AnimatedExports';
+import { Divider } from 'react-native-paper';
 
-export default function MembersListScreen({navigation}) {
-  const STORAGE_KEY="@monsgplus/meets"
-  const [meet, setMeet]=useState([]);
+export default function EventsListScreen({navigation}) {
+  const STORAGE_KEY="@monsgplus/events"
+  const [events, setEvents]=useState([]);
   const [search, setSearch]=useState('');
+  const [selectedType, setSelectedType]=useState("");
+  const TABS=[{label:"Tout",value:""},{label:"Rendez-Vous",value:"rendezvous"},{label:"Réunion",value:"reunion"}];
 
   const loadData=async()=>{
     try {
       const list= await getData(STORAGE_KEY);
-      setMeet(list);
-      console.log("Reunions chargés:", list);
+      // if (!Array.isArray(list)) 
+      //   { 
+      //     list = Object.values(list); 
+      //     setEvents(list);
+      //   }
+      setEvents(list);
+      
+      console.log("Evenements chargés:", list);
 
       
     } catch (error) {
@@ -54,63 +65,78 @@ export default function MembersListScreen({navigation}) {
     navigation.navigate('CreateMeet')
   }
   // Ou import { Ionicons } from '@expo/vector-icons';
+  const filteredEvents = events.filter(m => {
+    const matchSearch = m.titre?.toLowerCase().includes(search.toLowerCase());
+    const matchType = selectedType ? m.typeEvent?.toLowerCase() === selectedType.toLowerCase() : true;
+    return matchSearch && matchType;
+  });
 
-    const results = () => {
-  return meet.filter(m => 
-    m.titre?.toLowerCase().includes(search.toLowerCase()) 
-  );
-};
-const renderItem = ({ item }) => (
-  <TouchableOpacity 
-    style={styles.item} 
-    onPress={() => navigation.navigate('MeetDetails', { meet: item })}
-  >
-    <View style={styles.MemberRow}>
 
-      {/* 2. Conteneur Central (Nom + Statut) */}
-      <View style={styles.centerContent}>
-        <Text style={styles.nom} numberOfLines={2}>
-          {item.titre} {item.heure}
-        </Text>
-        <View style={styles.statutBadge}>
-          <Text style={styles.statutText}>{item.statut}</Text>
+
+const renderItem = ({ item }) =>{ 
+  
+  return(
+  <View>
+    <TouchableOpacity 
+      style={styles.item} 
+      onPress={() => navigation.navigate('MeetDetails', { events: item })}
+    >
+      <View style={styles.MemberRow}>
+
+        <View style={styles.centerContent}>
+          <Text style={styles.nom} numberOfLines={2}>
+            {item.titre } {item.heure }
+          </Text>
+          <View style={styles.statutBadge}>
+            <Text style={styles.statutText}>{item.statut}</Text>
+          </View>
+        </View>
+
+        {/* 3. Groupe de Boutons d'action */}
+        <View style={styles.actionButtons}>
+          <TouchableOpacity 
+            style={styles.iconButton} 
+            onPress={()=>navigation.navigate('CreateMeet', { events: item })}
+          >
+            <Ionicons name="create-outline" size={24} color="#4A90E2" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.iconButton} 
+            onPress={() => onDelete(item.id)}
+          >
+            <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+          </TouchableOpacity>
         </View>
       </View>
-
-      {/* 3. Groupe de Boutons d'action */}
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={()=>navigation.navigate('CreateMeet', { meet: item })}
-        >
-          <Ionicons name="create-outline" size={24} color="#4A90E2" />
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={() => onDelete(item.id)}
-        >
-          <Ionicons name="trash-outline" size={24} color="#FF3B30" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+    <Divider style={{width:'100%',borderColor:"blue",height:2,marginVertical:5,borderStyle:'solid'}}/>
+  </View>
+  
+  );
+};
 
 
- const filteredMeets = results();
   
   return (
     
       <SafeAreaView style={styles.container}>
+        <View >
+          <Label text={"Liste des"} />
+          <FilterTabs 
+            options={TABS}
+            selected={selectedType}
+            onChange={setSelectedType}
+            />
+        </View>
         <Label text={"Liste des réunions"} style={styles.Header}/>
-        <SearchBar type={'meets'} value={search} onChange={setSearch}/>
+        <SearchBar type={'events'} value={search} onChange={setSearch}/>
        
         
         
         <FlatList
           style={styles.FlatList} 
-          data={filteredMeets}
+          data={filteredEvents}
           keyExtractor={(item)=>item.id}
           renderItem={renderItem}
           ListEmptyComponent={<Label style={styles.empty} text={"Aucune réunion"}/>}
@@ -170,8 +196,6 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: '#fff',
     borderRadius: 0,
-    borderBottomWidth:1,
-    elevation:2,
     marginVertical: 2,
     width: '100%',
   },

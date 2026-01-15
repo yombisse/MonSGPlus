@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     flexShrink: 1, // Crucial pour le retour à la ligne
   },
   statutBadge: {
-    backgroundColor: 'red', // Votre couleur demandée
+    backgroundColor: 'green', // Votre couleur demandée
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,

@@ -10,23 +10,38 @@ const STORAGE_KEY="@monsgplus/users"
 
 const SigninScreen = ({navigation}) => {
     const [nom,setNom]=useState('');
+    const [erreur,setErreur]=useState('');
     const [prenom,setPrenom]=useState('');
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('')
     const [confirmpassword,setConfirmpassword]=useState('');
-
+    const newUser={ 
+        nom, 
+        prenom, 
+        email, 
+        password 
+    }
     async function Ajouter() {
         const users = await getData(STORAGE_KEY);
         console.log("users:",users)
         const exists = users.find(u => u.email === email);
 
         if (exists) {
+            setEmail("");
             Alert.alert("Erreur", "Un compte avec cet email existe déjà !");
-            return;
+            
+            setErreur("Erreur,l'email existe deja veuiller ressayer avec un autre mail!");
+            return erreur;
+        }
+        else{
+            await addData(STORAGE_KEY, newUser);
+            console.log("Inscription avec succès");
+            Alert.alert('Succes','Inscription effectuee!')
+            navigation.goBack();
+
         }
 
-        await addData(STORAGE_KEY, { nom, prenom, email, password });
-        console.log("Inscription avec succès");
+
          
         }
 
@@ -41,10 +56,7 @@ const SigninScreen = ({navigation}) => {
                    
          }
        else{
-            Ajouter()
-            Alert.alert('Succes','Inscription effectuee!')
-            navigation.goBack();
-        
+            Ajouter();
             }
         }
 
@@ -58,16 +70,18 @@ const SigninScreen = ({navigation}) => {
             <View style={styles.overlay}>
                 <Label text={"Veuillez vous inscrire ici"} style={styles.LabelContainer} textStyle={styles.title}/>
             
-                <KeyboardAvoidingView style={styles.MainFormContainer} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={50} >
+                <KeyboardAvoidingView style={styles.MainFormContainer} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={-20} >
                         <ScrollView contentContainerStyle={{paddingVertical:30}}>
-                            <TextInputField label="Nom" value={nom} onChangeText={setNom} placeholder="Fandie" style={styles.FormContainer} inputStyle={styles.input} />
-                            <TextInputField label="Prénom" value={prenom} onChangeText={setPrenom} placeholder="Entrer votre prénom" style={styles.FormContainer} inputStyle={styles.input} />
-                            <TextInputField label="Email" value={email} onChangeText={setEmail} placeholder="example@gmail.com" keyboardType="email-address" style={styles.FormContainer} inputStyle={styles.input} />
-                            <TextInputField label="Mot de passe" value={password} onChangeText={setPassword} placeholder="Entrer votre mot de passe" secureTextEntry style={styles.FormContainer} inputStyle={styles.input} />
-                            <TextInputField label="Confirmer Mot de passe" value={confirmpassword} onChangeText={setConfirmpassword} placeholder="Confirmer votre mot de passe" secureTextEntry style={styles.FormContainer} inputStyle={styles.input} />
-                            <MyButton label="S'inscrire" onpress={inscrisption} style={styles.SignInbutton} labelStyle={styles.SignInbuttonLabel} />
-                            <Label text="ou" style={styles.textStyle} />
-                            <MyButton label="Se connecter" onpress={() => navigation.navigate('Login')} style={styles.Loginbutton} labelStyle={styles.LoginbuttonLabel} />
+                            <View style={styles.FormContainer}>
+                                <TextInputField label="Nom" value={nom} onChangeText={setNom} placeholder="Fandie" style={styles.input}  />
+                                <TextInputField label="Prénom" value={prenom} onChangeText={setPrenom} placeholder="Entrer votre prénom" style={styles.input} />
+                                <TextInputField label="Email" value={email} onChangeText={setEmail} placeholder="example@gmail.com" keyboardType="email-address" style={erreur? styles.existinput:styles.input}  />
+                                <TextInputField label="Mot de passe" value={password} onChangeText={setPassword} placeholder="Entrer votre mot de passe" secureTextEntry style={styles.input}  />
+                                <TextInputField label="Confirmer Mot de passe" value={confirmpassword} onChangeText={setConfirmpassword} placeholder="Confirmer votre mot de passe" secureTextEntry style={styles.input}  />
+                                <MyButton label="S'inscrire" onpress={inscrisption} style={styles.SignInbutton} labelStyle={styles.SignInbuttonLabel} />
+                                <Label text="ou" style={styles.textStyle} />
+                                <MyButton label="Se connecter" onpress={() => navigation.navigate('Login')} style={styles.Loginbutton} labelStyle={styles.LoginbuttonLabel} />
+                            </View>
                         </ScrollView>
                
                 </KeyboardAvoidingView>
@@ -97,14 +111,14 @@ const styles = StyleSheet.create({
         width:150,
         height:40,
         borderRadius:0,
-        backgroundColor:'#ABAA',
+        backgroundColor:'green',
         alignSelf:'center',
 
 
     },
      LoginbuttonLabel:{
         color:'#FFF',
-        fontSize:16
+        fontSize:18
     },
      
     SignInbuttonLabel:{
@@ -148,6 +162,13 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderEndEndRadius:8,
         borderColor:'#1E3A8A', 
+    },
+    existinput:{
+        width:300,
+        height:60,
+        borderWidth:3,
+        borderEndEndRadius:8,
+        borderColor:'red', 
     },
     buttonLabel:{
         color:'#FFF',

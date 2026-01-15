@@ -80,42 +80,41 @@ const LoginScreen = ({navigation}) => {
 
                 
                     <View style={styles.MainFormContainer}>
+                        <View style={styles.FormContainer}>
                         <TextInputField 
-                        label={"Email"} 
-                        value={email} 
-                        onChangeText={(text)=>setEmail(text)} 
-                        placeholder={"example@gmail.com"} 
-                        keyboardType={'email-address'} 
-                        labelStyle={styles.FormLabel}
-                        style={styles.FormContainer}
-                        inputStyle={styles.input}
-                        
+                            label="Email" 
+                            value={email} 
+                            onChangeText={setEmail} // ✅ corrigé
+                            placeholder="example@gmail.com" 
+                            keyboardType="email-address" 
+                            style={styles.input}
                         />
+
                         <TextInputField 
-                            label={"Password"} 
+                            label="Password" 
                             value={password} 
-                            onChangeText={(text)=>setPassword(text)} 
-                            placeholder={'Entrer votre mot de passe'}
-                            inputStyle={styles.input}
-                            labelStyle={styles.FormLabel}
-                            style={styles.FormContainer}
-                            />
-                        {erreur?<Text style={{textAlign:'center',color:'red'}}>{erreur}</Text> :null}
-                        <MyButton 
-                            label={"Se connecter"}  
-                            onpress={Connexion} 
-                            style={styles.Loginbutton}
-                            labelStyle={styles.LoginbuttonLabel}
-                        
+                            onChangeText={setPassword} // ✅ cohérent
+                            placeholder="Entrer votre mot de passe"
+                            secureTextEntry={true} // ✅ sécurité
+                            style={styles.input}
                         />
-                        <Label text={"ou"} textStyle={styles.textStyle}/>
+
+                        {erreur ? <Text style={{textAlign:'center',color:'red'}}>{erreur}</Text> : null}
+
+                        <MyButton label={"Se Connecter"}onpress={Connexion} 
+                            style={styles.Loginbutton}
+                            labelStyle={styles.LoginbuttonLabel}/>
+                        <Label text={"ou"} style={styles.textStyle}/>
+
                         <MyButton 
-                            label={"S'inscrire "}  
-                            onpress={()=>navigation.navigate('SignIn')} 
+                            label="S'inscrire"  
+                            onpress={() => navigation.navigate('SignIn')} 
                             style={styles.SignInbutton}
                             labelStyle={styles.SignInbuttonLabel}
                         />
+                        </View>
                     </View>
+
                 
                     
                 </View>
@@ -139,32 +138,30 @@ const styles = StyleSheet.create({
     },
     SignInbutton:{
         margin:10,
-        width:100,
+        width:150,
         height:40,
         borderRadius:0,
-        backgroundColor:'#ABAA',
+        backgroundColor:'green',
         alignSelf:'center'
 
 
     },
      SignInbuttonLabel:{
         color:'#FFF',
-        fontSize:16
+        fontSize:18
     },
      
     LoginbuttonLabel:{
         color:'#FFF',
-        fontSize:24
+        fontSize:24,
     },
    
     Loginbutton:{
         marginVertical:5,
-        alignSelf:'center',
-        width:'80%'
 
     },
     textStyle:{
-        marginHorizontal:'45%',
+        alignSelf:'center'
 
     },
     LabelContainer:{
@@ -196,23 +193,24 @@ const styles = StyleSheet.create({
     },
     FormContainer:{
         justifyContent:'center',
-        paddingLeft:10,
-        paddingRight:10,
-        alignItems:'center'
+        padding:10,
+        alignSelf:'center',
+        
     },
     FormLabel:{
         fontWeight:'bold',
         fontSize:24,
 },
     MainFormContainer:{
-
+        flex:1,
+        marginVertical:100,
+        justifyContent:'center',
         backgroundColor:'#FFF',
         shadowColor: '#FFF',
         shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 5,
         borderWidth:1,
-
         borderRadius:10,
     }
 })

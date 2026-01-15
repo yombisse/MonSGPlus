@@ -9,19 +9,24 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import MembersListScreen from './src/screens/MembersListScreen';
 import MembersFormScreen from './src/screens/MembersFormScreen';
 import MembersDetailsScreen from './src/screens/MembersDetailsScreen';
-import StatsScreen from './src/screens/StatsScreen';
-import SettingScreen from './src/screens/SettingScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
-import HelpScreen from './src/screens/HelpScreen';
+import StatsScreen from './src/drawer/StatsScreen';
+import SettingScreen from './src/drawer/SettingScreen';
+import ProfileScreen from './src/drawer/ProfileScreen';
+import HelpScreen from './src/drawer/HelpScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import MeetScreen from './src/screens/MeetScreen';
 import CreateMeetScreen from './src/screens/CreateMeetScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
-import MeetListScreen from './src/screens/MeetListScreen';
-import MeetDetailScreen from './src/screens/MeetDetailScreen';
+import MeetListScreen from './src/screens/EventListScreen';
+import MeetDetailScreen from './src/screens/EventDetailScreen';
 import SigninScreen from './src/screens/SigninScreen';
-import { LogoutScreen } from './src/screens/LoginScreen';
+import EventForm from './src/forms/EventForm';
+import EventDetailScreen from './src/screens/EventDetailScreen';
+import CustomDrawer from './src/drawer/CustomDrawer';
+import NotificationScreen from './src/drawer/NotificationScreen';
+import AboutScreen from './src/drawer/AboutScreen';
+
 
 
 const Stack=createStackNavigator();
@@ -51,9 +56,9 @@ function MeetStack(navigation){
     <Stack.Navigator >
       <Stack.Screen name='Meets' component={MeetListScreen} 
        options={{headerShown:false}}/>
-       <Stack.Screen name='MeetDetails' component={MeetDetailScreen} 
+       <Stack.Screen name='MeetDetails' component={EventDetailScreen} 
        options={{headerShown:false}}/>
-      <Stack.Screen name='CreateMeet' component={CreateMeetScreen}
+      <Stack.Screen name='CreateMeet' component={EventForm}
       options={{ title: "Planifier une reuinion",headerShown:true }} />
       <Stack.Screen name='ParticipateMeet' component={MeetScreen}
       options={{ title: "Participer a une reuinion",headerShown:true }} />
@@ -76,7 +81,7 @@ function MainTab(){
           else if(route.name==='Members'){
             iconName=focused? 'people' : 'people-outline';
           }
-          else{ if(route.name==='Meets')
+          else{ if(route.name==='Events')
             iconName= focused? 'calendar' : 'calendar-outline';
           }
           return <Ionicons name={iconName} size={size} color={color}/>;
@@ -90,7 +95,7 @@ function MainTab(){
     >
       <Tab.Screen name='Dashboard' component={DashboardScreen} options={{ headerShown: false, title: "Accueil" }} />
       <Tab.Screen name='Members' component={MemberStack}/>
-      <Tab.Screen name='Meets' component={MeetStack}/>
+      <Tab.Screen name='Events' component={MeetStack}/>
     </Tab.Navigator>
 
   );
@@ -102,6 +107,7 @@ function WelcomeStack(){
         <Stack.Screen name='WelcomeScreen' component={WelcomeScreen}  options={{headerShown:false}} />
         <Stack.Screen name='Login' component={LoginScreen} />
         <Stack.Screen name='SignIn' component={SigninScreen} />
+
 
     </Stack.Navigator>
   )
@@ -131,32 +137,7 @@ function HomeDrawer(){
 
   return(
     <Drawer.Navigator 
-      drawerContent={(props) => (
-        <DrawerContentScrollView {...props}>
-          <DrawerItem label="Home" onPress={() => props.navigation.navigate('Home')}
-          />
-          <DrawerItem label="Profile" onPress={() => props.navigation.navigate('Mon Profile')}
-          />
-          <DrawerItem label={"Statistiques"} onPress={()=>props.navigation.navigate('Stats')}/>
-          <DrawerItem label={"Paramètres"} onPress={()=>props.navigation.navigate('Settings')}/>
-          <DrawerItem label={"Support"} onPress={()=>props.navigation.navigate('Help')}/>
-          <DrawerItem label="Déconnexion" onPress={() => {
-              Alert.alert(
-                "Déconnexion",
-                "Voulez-vous vraiment vous déconnecter ?",
-                [
-                  { text: "Annuler", style: "cancel" },
-                  {
-                    text: "Oui",
-                    style: "destructive",
-                    onPress: () => props.navigation.navigate('Login'),
-                  },
-                ]
-              );
-            }}
-          />
-        </DrawerContentScrollView>
-      )}
+      drawerContent={(props) =><CustomDrawer {...props}/>}
     
     screenOptions={{
           headerStyle:{
@@ -171,9 +152,12 @@ function HomeDrawer(){
            
            }} />
           <Drawer.Screen name='Mon Profile' component={ProfileScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='Notification' component={NotificationScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Stats' component={StatsScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Settings' component={SettingScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='About' component={AboutScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Help' component={HelpScreen} options={{headerShown:false}}/>
+
         </Drawer.Navigator>
   )
 }
