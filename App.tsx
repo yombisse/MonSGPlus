@@ -152,10 +152,9 @@ function HomeDrawer(){
            
            }} />
           <Drawer.Screen name='Mon Profile' component={ProfileScreen} options={{headerShown:false}}/>
-          <Drawer.Screen name='Notification' component={NotificationScreen} options={{headerShown:false}}/>
+          <Drawer.Screen name='Notifications' component={NotificationScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Stats' component={StatsScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Settings' component={SettingScreen} options={{headerShown:false}}/>
-          <Drawer.Screen name='About' component={AboutScreen} options={{headerShown:false}}/>
           <Drawer.Screen name='Help' component={HelpScreen} options={{headerShown:false}}/>
 
         </Drawer.Navigator>

@@ -1,11 +1,12 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { LineChart,BarChart,PieChart } from 'react-native-gifted-charts';
 import Label from '../componnents/label';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-export default function StatsScreen() {
+export default function StatsScreen({navigation}) {
   const lineData = [
               { value: 10, label: 'Jan' },
               { value: 20, label: 'Fév' },
@@ -28,6 +29,12 @@ export default function StatsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+      <TouchableOpacity onPress={()=>navigation.goBack()}>
+        <Ionicons name="arrow-back" size={30} color="#FFF"/>
+      </TouchableOpacity>
+      <Text style={styles.titre}>Statistiques</Text>
+    </View>
       <ScrollView   contentContainerStyle={{padding:20}}>
           <View style={styles.LineChartContainer}>
             <Label text={"Nouveaux membres par mois"} style={styles.LineChartLabel} textStyle={styles.LineChartLabelText}/>
@@ -93,6 +100,25 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent:'center',
   },
+    header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E3A8A', // bleu profond
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    elevation: 4, // ombre Android
+    shadowColor: '#000', // ombre iOS
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  titre: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#FFF',
+    marginLeft: 12,
+  },
+  
   LineChartContainer:{
       margin:5,
     shadowColor: "#000",

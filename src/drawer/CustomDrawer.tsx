@@ -4,6 +4,7 @@ import { View,Image, StyleSheet } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Label from "../componnents/label";
 import  {deconnexion}  from './logout';
+import { Avatar } from "react-native-paper";
 
 
 const CustomDrawer = (props) => {
@@ -13,9 +14,7 @@ const CustomDrawer = (props) => {
   return (
     <DrawerContentScrollView {...props}>
         <View style={styles.user_header}>
-            <View style={styles.user_avatar}>
-                <Label text={"FM"}style={styles.user_avatar_icon}/>
-            </View>
+            <Avatar.Icon icon={"account"} size={100}/>
             <View style={styles.user_info}>
                 <Label text={"FANDIE MICHEL"} style={styles.user_name}/>
                 <Label text={"yombissefandie@gmail.com"} style={styles.user_email}/>
@@ -23,7 +22,7 @@ const CustomDrawer = (props) => {
         </View>
 
         <DrawerItem label="Notifications"
-        icon={()=>{
+        icon={()=>(
             <View style={styles.notification_icon}>
                 <Ionicons name="notifications-outline" size={22} color="blue"/>
                 {notificationCount>0 &&(
@@ -32,7 +31,7 @@ const CustomDrawer = (props) => {
                     </View>
                 )}
             </View>
-        }}
+  )}
          onPress={() => props.navigation.navigate('Notifications')}
           />
           <DrawerItem label="Profile"
@@ -40,7 +39,7 @@ const CustomDrawer = (props) => {
            onPress={() => props.navigation.navigate('Mon Profile')}
           />
           <DrawerItem label={"Statistiques"}
-          icon={()=> <Ionicons name="stats-outline" size={22} color="blue"/>}
+          icon={()=> <Ionicons name="stats-chart-outline" size={22} color="blue"/>}
            onPress={()=>props.navigation.navigate('Stats')}/>
           <DrawerItem label={"Paramètres"}
           icon={()=> <Ionicons name="settings-outline" size={22} color="blue"/>} 
@@ -48,10 +47,6 @@ const CustomDrawer = (props) => {
           <DrawerItem label={"Aide"} 
           icon={()=> <Ionicons name="help-circle-outline" size={22} color="blue"/>}
           onPress={()=>props.navigation.navigate('Help')}/>
-          <DrawerItem label="A propos"
-          icon={()=> <Ionicons name="information-circle-outline" size={22} color="blue"/>} 
-          onPress={()=> props.navigation.navigate('About')}
-          />
           <View style={styles.deconnexion}>
             <DrawerItem label="Déconnexion"
             icon={()=> <Ionicons name="log-out-outline" size={22} color="blue"/>} 
@@ -66,7 +61,7 @@ const CustomDrawer = (props) => {
 export default CustomDrawer;
 const styles = StyleSheet.create({
   user_header: {
-    flexDirection: 'row',
+    justifyContent:'center',
     alignItems: 'center',
     padding: 15,
     backgroundColor: '#f3f4f6', // gris clair
@@ -94,6 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#111827',
+    marginHorizontal:50
   },
   user_email: {
     fontSize: 14,
